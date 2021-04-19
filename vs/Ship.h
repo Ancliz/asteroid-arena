@@ -1,22 +1,22 @@
 #ifndef SHIP_H
 #define SHIP_H
 
-//#include "globals.h"
 #include "Vec2d.h"
+#include "globals.h"
 
 #define REF_POINTS		2
 #define SHIP_POINTS		5
-#define SHIP_RGB		3
 
 class Ship {
 private:
 	Point *origin;
 	Vec2d  dir;
 	Point points[SHIP_POINTS];
-	float outlineColour[SHIP_RGB];
-	float fillColour[SHIP_RGB];
-	//float boundingRadius;
-	float velocity;
+	float outlineColour[AA_RGB];
+	float fillColour[AA_RGB];
+	int boundingRadius;
+	float speed;
+	float rotSpeed;
 	float angleFromX;
 
 public:
@@ -32,7 +32,7 @@ public:
 	Vec2d  getDir();
 	float* getFill();
 	float* getOutline();
-	float  getVel();
+	float  getSpeed();
 	float  getAngleFromX();
 
 	void moveForwards(double dt);

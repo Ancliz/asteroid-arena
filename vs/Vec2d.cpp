@@ -47,13 +47,14 @@ float Vec2d::getMag() {
 	 return sqrt((x*x + y*y));
  }
 
-
+ // Dot product
  double operator*(Vec2d v1, Vec2d v2) {
 	 double x = v1.getCoords()->getX() * v2.getCoords()->getX();
 	 double y = v2.getCoords()->getY() * v2.getCoords()->getY();
 	 return x + y;
  }
 
+ // Vector subtraction
  Vec2d& Vec2d::operator-=(const Vec2d v) {
 	 float x = coords.getX();
 	 float y = coords.getY();
@@ -62,6 +63,7 @@ float Vec2d::getMag() {
 	 return *this;
  }
   
+ // Scalar multiplation of vector
  Vec2d operator*(double scalar, Vec2d v) {
 	 Vec2d r = Vec2d(v);
 	 Point* p = r.getCoords();
@@ -69,10 +71,12 @@ float Vec2d::getMag() {
 	 return r;
  }
 
+ // Scalar multiplation of vector
  Vec2d operator*(Vec2d v, double scalar) {
 	 return scalar * v;
  }
 
+ // Vector subtraction
   Vec2d operator-(Vec2d v1, const Vec2d& v2) {
 	 v1 -= v2;
 	 return v1;

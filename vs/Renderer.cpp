@@ -18,25 +18,38 @@
 
 #include "Renderer.h"
 #include "Keyboard.h"
+#include "AsteroidManager.h"
 
-Renderer::Renderer() {
-	Asteroid* a = new Asteroid();
-	asteroids.push_back(a);
+Renderer::Renderer(Arena* arena) : arena(arena) {}
+Renderer::Renderer() {}
 
+void Renderer::drawArena() {
+
+	glPushMatrix();
+	glColor3f(arena->colour[0], arena->colour[1], arena->colour[2]);
+	//glScalef(100,100,0);
+	glBegin(GL_LINE_LOOP);
+	{
+		glVertex3f(-arena->width/2, -arena->height/2, 0);
+		glVertex3f(arena->width/2, -arena->height/2, 0);
+		glVertex3f(arena->width/2, arena->height/2, 0);
+		glVertex3f(-arena->width/2, arena->height/2, 0);
+	}
+	glEnd();
+	glPopMatrix();
 }
-
 void Renderer::drawShip(Ship& ship) {
 	Point points[SHIP_POINTS];
-	float rgb_fill[SHIP_RGB];
-	float rgb_out[SHIP_RGB];
+	float rgb_fill[AA_RGB];
+	float rgb_out[AA_RGB];
 
 	for (int i = 0; i < SHIP_POINTS; ++i)
 		points[i] = ship.getPoints()[i];
 
-	for (int i = 0; i < SHIP_RGB; ++i)
+	for (int i = 0; i < AA_RGB; ++i)
 		rgb_fill[i] = ship.getFill()[i];
 
-	for (int i = 0; i < SHIP_RGB; ++i)
+	for (int i = 0; i < AA_RGB; ++i)
 		rgb_out[i] = ship.getOutline()[i];
 
 
@@ -44,11 +57,10 @@ void Renderer::drawShip(Ship& ship) {
 	glPushMatrix();
 
 	glTranslatef(ship.getOrigin()->getX(), ship.getOrigin()->getY(), 0);
-	glRotated(ship.getAngleFromX()*1.0, 0, 0, 1);
+	glRotated(ship.getAngleFromX() * 180.0/M_PI, 0, 0, 1);
 
-	glScaled(20, 20, 0.0);
+	glScaled(2.5, 2.5, 0.0);
 
-	drawAxis();
 	glColor3f(rgb_fill[0], rgb_fill[1], rgb_fill[2]);
 	glBegin(GL_TRIANGLES);
 	{
@@ -77,26 +89,28 @@ void Renderer::drawShip(Ship& ship) {
 }
 
 void Renderer::drawAsteroids() {
-	for(Asteroid* a : asteroids)
-		drawAsteroid(a);
+//	drawAsteroid()
 }
 
+void Renderer::drawCircle(int radius, int nodes) {
+	glBegin(GL_POLYGON);
+	float x, y, theta;
+
+	for(int i = 0; i < nodes; ++i) {
+		theta = i/(float)nodes * 2 * M_PI;
+		x = radius * cos(theta);
+		y = radius * sin(theta);
+		glVertex3f(x, y, 0);
+	}
+	glEnd();
+}
 
 void Renderer::drawAsteroid(Asteroid* asteroid) {
 	glPushMatrix();
-	glScalef(20,20,0);
-
 	glColor3f(0.545, 0.271, 0.0745);
-	glBegin(GL_POLYGON);
-	
-	float x, y, theta;
-	for(int i = 0; i < 20; ++i) {
-		theta = i/(float)20 * 2 * M_PI;
-		x = 4 * cos(theta);
-		y = 4 * sin(theta);
-		glVertex3f(x,y,0);
-	}
-	glEnd();
+	glTranslatef(-5,0,0);
+	glScalef(5,5,0);
+	drawCircle(2, 10);
 	glPopMatrix();
 
 }

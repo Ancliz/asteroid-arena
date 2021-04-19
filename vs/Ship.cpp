@@ -4,16 +4,14 @@
 
 Ship ship = Ship(new Point(0,0,0));
 
-Ship::Ship(Point* pos) {
-	points[0] = Point(*pos, 0, 0);
-	points[1] = Point(*pos, 0.0, 1);
-	points[2] = Point(*pos, -1, -1);
-	points[3] = Point(*pos, 0.0, -0.5);
-	points[4] = Point(*pos, 1, -1);
+Ship::Ship(Point* pos) : boundingRadius(1), angleFromX(0), speed(5), rotSpeed(10), dir(UVEC_J) {
+	points[0] = Point(*pos, 0.0, 0.0);
+	points[1] = Point(*pos, 1.0, 0.0);
+	points[2] = Point(*pos, -1.0, -1.0);
+	points[3] = Point(*pos, -0.5, 0);
+	points[4] = Point(*pos, -1.0, 1.0);
 
 	origin = &points[0];
-	dir = UVEC_J;
-	angleFromX = 0;
 
 	fillColour[0] = 1.0;
 	fillColour[1] = 0.7;
@@ -22,35 +20,29 @@ Ship::Ship(Point* pos) {
 	outlineColour[0] = 0;
 	outlineColour[1] = 1;
 	outlineColour[2] = 0;
+
 }
 
 float Ship::getAngleFromX() {
-	return angleFromX;
+	return atan2(dir.getCoords()->getY(), dir.getCoords()->getX());
 }
 
 void Ship::turnLeft(double dt, bool backwards) {
 	float theta = (backwards ? -M_PI / 180 : M_PI / 180);
-	Math::performRotation(dir.getCoords(), M_PI / 180);
-	++angleFromX;
-
-	printf("dir: %s\tangleFromX: %f\n", dir.getCoords()->toString().c_str(), angleFromX);
+	Math::performRotation(dir.getCoords(),dt * rotSpeed * theta);
 }
 
 void Ship::turnRight(double dt, bool backwards) {
 	float theta = (backwards ? M_PI / 180 : -M_PI / 180);
-	Math::performRotation(dir.getCoords(), -M_PI / 180);
-	--angleFromX;
-
-	printf("dir: %s\tangleFromX: %f\n", dir.getCoords()->toString().c_str(), angleFromX);
+	Math::performRotation(dir.getCoords(), dt * rotSpeed * theta);
 }
 
 void Ship::moveForwards(double dt) {
-	Math::performTranslation(origin, dir.getCoords()->getX(), dir.getCoords()->getY());
-	printf("dir: %s\torigin: %s\n", origin->toString().c_str(), dir.getCoords()->toString().c_str());
+	Math::performTranslation(origin,dt * speed * dir.getCoords()->getX(),dt * speed * dir.getCoords()->getY());
 }
 
 void Ship::moveBackwards(double dt) {
-	Math::performTranslation(origin, -dir.getCoords()->getX(), -dir.getCoords()->getY());
+	Math::performTranslation(origin, dt * speed* -dir.getCoords()->getX(), dt * speed * -dir.getCoords()->getY());
 }
 
 Point* Ship::getOrigin() {

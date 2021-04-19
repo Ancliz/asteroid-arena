@@ -18,33 +18,49 @@
 #endif
 #endif
 
-#include "../vs/Ship.h"
-#include "../vs/Renderer.h"
+#include "../vs/globals.h"
 #include "../vs/Keyboard.h"
-
+#include "../vs/Engine.h"
 
 extern void onKeyDown(unsigned char key, int x, int y);
 extern void onSpecialDown(int key, int x, int y);
 extern void onKeyUp(unsigned char key, int x, int y);
 extern void onSpecialUp(int key, int x, int y);
 
-Renderer renderer = Renderer();
+Configuration config =
+{
+	{1, 0.75, 0},
+	{0, 1, 0},
+	3,
+	2, 2,
+	'w', 'a', 's', 'd',
+	false,
+	{WIDTH, HEIGHT},
+	{1,1,1},
+	false,
+	5,
+	1,
+	1,
+	5,
+	20,
+	{0.5, 0.7, 0.1}
+};
+
+Engine engine = Engine();
+
 
 void onIdle() {
 
 	double t, dt;
 	static double last_t = 0.0;
 
-	t = glutGet(GLUT_ELAPSED_TIME) / 1000;
+	t = glutGet(GLUT_ELAPSED_TIME) / 100.0;
 	dt = t - last_t;
 	last_t = t;
 
-	if(!keys.escDown) {
-		if(keys.forwardsDown)	ship.moveForwards(dt);
-		if(keys.backDown)		ship.moveBackwards(dt);
-		if(keys.leftDown)		ship.turnLeft(dt, keys.backDown);
-		if(keys.rightDown)		ship.turnRight(dt, keys.backDown);
-	}
+
+	engine.updateGameState(dt);
+
 	glutPostRedisplay();
 }
 
@@ -52,7 +68,22 @@ void onReshape(int width, int height) {
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-0.5 * width, width / 2, -0.5 * height, height / 2, -1.0, 1.0);
+	int w = WIDTH;
+	int h = HEIGHT;
+
+	//glOrtho(-10, 10, -10, 10, -1.0, 1.0);
+	if(config.useFullWindowForArena) {
+		w = width;
+		h = height;
+	} else {
+		w = config.arenaDimensions[0];
+		h = config.arenaDimensions[1];
+	}
+
+	if(width >= height)
+		glOrtho(-w/2 * width/height,w/2 * width/height, -h/2, h/2, -1.0, 1.0);
+	else
+		glOrtho(-w/2, w/2, -h/2 * height/width, h/2 * height/width, -1.0, 1.0);
 
 	glutPostRedisplay();
 
@@ -64,10 +95,7 @@ void onDisplay() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-
-	renderer.drawShip(ship);
-	renderer.drawQuads();
-	//renderer.drawAsteroids();
+	engine.render();
 
 	int err;
 	while ((err = glGetError()) != GL_NO_ERROR)

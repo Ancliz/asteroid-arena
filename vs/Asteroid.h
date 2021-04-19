@@ -8,9 +8,9 @@
 class Asteroid {
 	private:
 		Point* origin;
+		bool   alive;
 		float  radius;
 		float  hp;
-
 
 	public:
 
@@ -18,6 +18,7 @@ class Asteroid {
 
 		void setHP(float hp);
 		float getHP();
+		bool isAlive();
 
 
 };
