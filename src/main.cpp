@@ -28,29 +28,37 @@ extern void onKeyUp(unsigned char key, int x, int y);
 extern void onSpecialUp(int key, int x, int y);
 
 Configuration config =
-{
-	{1, 0.75, 0},
-	{0, 1, 0},
-	3,
-	2, 2,
+{	// Ship
+	{ 1, 0.75, 0.0},
+	{0.0, 1.0, 0.0},
+	8.0,
+	2.0, 2.0,
+	true,
 	'w', 'a', 's', 'd',
-	false,
+	// Arena
 	{WIDTH, HEIGHT},
-	{1,1,1},
+	{1.0, 1.0, 1.0},
+	// Asteroids
+	10,
 	false,
+	100,
+	10,
 	5,
 	1,
-	1,
-	5,
-	20,
+	1.0,
+	5.0,
+	20.0,
 	{0.5, 0.7, 0.1}
 };
 
 Engine engine = Engine();
 
-
 void onIdle() {
 
+	if(gameOver) {
+		printf("Game over!\n");
+	}
+		
 	double t, dt;
 	static double last_t = 0.0;
 
@@ -58,32 +66,23 @@ void onIdle() {
 	dt = t - last_t;
 	last_t = t;
 
-
 	engine.updateGameState(dt);
 
 	glutPostRedisplay();
 }
 
 void onReshape(int width, int height) {
-	glViewport(0, 0, width, height);
+	glViewport(0, 0 , width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	int w = WIDTH;
-	int h = HEIGHT;
-
-	//glOrtho(-10, 10, -10, 10, -1.0, 1.0);
-	if(config.useFullWindowForArena) {
-		w = width;
-		h = height;
-	} else {
-		w = config.arenaDimensions[0];
-		h = config.arenaDimensions[1];
+	int w = config.arenaDim[0];
+	int h = config.arenaDim[1];
+	if(width >= height) {
+		glOrtho(-w / 2 * width / height, w / 2 * width / height, -h / 2, h / 2, -1.0, 1.0);
 	}
-
-	if(width >= height)
-		glOrtho(-w/2 * width/height,w/2 * width/height, -h/2, h/2, -1.0, 1.0);
-	else
-		glOrtho(-w/2, w/2, -h/2 * height/width, h/2 * height/width, -1.0, 1.0);
+	else {
+		glOrtho(-w / 2, w / 2, -h / 2 * height / width, h / 2 * height / width, -1.0, 1.0);
+	}
 
 	glutPostRedisplay();
 
@@ -124,6 +123,7 @@ void init(int* argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
+	srand(3956476);
 	init(&argc, argv);
 	glutMainLoop();
 	return(EXIT_SUCCESS);

@@ -7,20 +7,26 @@
 
 class Asteroid {
 	private:
+		Vec2d  direction;
 		Point* origin;
+		int    size;
+		int    hp;
+		float  speed;
 		bool   alive;
-		float  radius;
-		float  hp;
 
 	public:
-
+		Asteroid(Point* origin);
 		Point* getOrigin();
 
-		void setHP(float hp);
-		float getHP();
+		int  getSize();
+		int  getHP();
+		void decrementHP(int hp);
+		void reRoll();
+		void kill();
 		bool isAlive();
-
-
+		void setAlive();
+		void setDirection(Vec2d direction);
+		void move(double dt);
 };
 
 

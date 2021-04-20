@@ -83,3 +83,8 @@ float Vec2d::getMag() {
  }
 
 
+  std::string Vec2d::toString() {
+	  return coords.toString() + " Mag: " + std::to_string(mag);
+  }
+
+

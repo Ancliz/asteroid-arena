@@ -16,24 +16,50 @@
 
 #define _USE_MATH_DEFINES
 
+#include "globals.h"
 #include "Renderer.h"
 #include "Keyboard.h"
 #include "AsteroidManager.h"
 
-Renderer::Renderer(Arena* arena) : arena(arena) {}
+Renderer::Renderer(Arena* arena) : arena(arena) {
+
+}
+
+void Renderer::setSpawnCircle(Point* spawnCircle[]) {
+	for(int i = 0; i < NUM_ASTEROID_NODES; ++i) {
+		this->spawnCircle[i] = spawnCircle[i];
+	}
+}
 Renderer::Renderer() {}
+
+void Renderer::drawSpawnCircle() {
+	glBegin(GL_POINTS);
+	for(Point* p : spawnCircle)
+		glVertex2d(p->getX(), p->getY());
+	glEnd();
+}
 
 void Renderer::drawArena() {
 
 	glPushMatrix();
-	glColor3f(arena->colour[0], arena->colour[1], arena->colour[2]);
 	//glScalef(100,100,0);
-	glBegin(GL_LINE_LOOP);
+	glBegin(GL_LINES);
 	{
-		glVertex3f(-arena->width/2, -arena->height/2, 0);
-		glVertex3f(arena->width/2, -arena->height/2, 0);
+		glColor3f(arena->topWallColour[0], arena->topWallColour[1], arena->topWallColour[2]);
 		glVertex3f(arena->width/2, arena->height/2, 0);
 		glVertex3f(-arena->width/2, arena->height/2, 0);
+
+		glColor3f(arena->leftWallColour[0], arena->leftWallColour[1], arena->leftWallColour[2]);
+		glVertex3f(-arena->width/2, -arena->height/2, 0);
+		glVertex3f(-arena->width/2, arena->height/2, 0);
+
+		glColor3f(arena->rightWallColour[0], arena->rightWallColour[1], arena->rightWallColour[2]);
+		glVertex3f(arena->width/2, -arena->height/2, 0);
+		glVertex3f(arena->width/2, arena->height/2, 0);
+
+		glColor3f(arena->bottomWallColour[0], arena->bottomWallColour[1], arena->bottomWallColour[2]);
+		glVertex3f(-arena->width/2, -arena->height/2+0.2, 0);
+		glVertex3f(arena->width/2, -arena->height/2+0.2, 0);	
 	}
 	glEnd();
 	glPopMatrix();
@@ -57,9 +83,10 @@ void Renderer::drawShip(Ship& ship) {
 	glPushMatrix();
 
 	glTranslatef(ship.getOrigin()->getX(), ship.getOrigin()->getY(), 0);
-	glRotated(ship.getAngleFromX() * 180.0/M_PI, 0, 0, 1);
 
-	glScaled(2.5, 2.5, 0.0);
+	glRotated(ship.getAngleFromX() * 180.0/M_PI, 0, 0, 1);
+	glScaled(ship.getSize(), ship.getSize(), 0.0);
+	drawCircle(1, 20, false);
 
 	glColor3f(rgb_fill[0], rgb_fill[1], rgb_fill[2]);
 	glBegin(GL_TRIANGLES);
@@ -88,12 +115,11 @@ void Renderer::drawShip(Ship& ship) {
 	glPopMatrix();
 }
 
-void Renderer::drawAsteroids() {
-//	drawAsteroid()
-}
 
-void Renderer::drawCircle(int radius, int nodes) {
-	glBegin(GL_POLYGON);
+void Renderer::drawCircle(int radius, int nodes, bool fill) {
+	int mode = fill ? GL_POLYGON : GL_LINE_LOOP;
+
+	glBegin(mode);
 	float x, y, theta;
 
 	for(int i = 0; i < nodes; ++i) {
@@ -106,11 +132,16 @@ void Renderer::drawCircle(int radius, int nodes) {
 }
 
 void Renderer::drawAsteroid(Asteroid* asteroid) {
-	glPushMatrix();
+	Point* o = asteroid->getOrigin();
 	glColor3f(0.545, 0.271, 0.0745);
-	glTranslatef(-5,0,0);
-	glScalef(5,5,0);
-	drawCircle(2, 10);
+	glPushMatrix();
+
+	glTranslatef(o->getX(),o->getY(),0);
+	glScalef(asteroid->getSize(), asteroid->getSize(), 0);
+
+	drawCircle(1, 20, true);
+
+	drawAxis();
 	glPopMatrix();
 
 }

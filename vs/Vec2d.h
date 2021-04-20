@@ -24,11 +24,14 @@ public:
 	Vec2d getUnitVec() const;
 
 	Vec2d& operator-=(const Vec2d v);
+
+	std::string toString();
 	
 };
 
 const Vec2d UVEC_I = Vec2d(Point(1, 0, 0));
 const Vec2d UVEC_J = Vec2d(Point(0, 1, 0));
+
 
 // Calculate dot product
 double operator*(Vec2d v1, Vec2d v2);

@@ -5,7 +5,11 @@
 
 struct Arena {
 	int width, height;
-	float colour[AA_RGB];
+	float topWallColour[AA_RGB];
+	float leftWallColour[AA_RGB];
+	float bottomWallColour[AA_RGB];
+	float rightWallColour[AA_RGB];
+	Point shadowBox[4];
 };
 
 #endif

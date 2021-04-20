@@ -5,6 +5,10 @@
 #define HEIGHT	200
 #define AA_RGB	3
 
+#define SPAWN_CIRCLE_NODES	200
+
+extern bool gameOver;
+
 struct Configuration {
 
 	// Ship
@@ -12,17 +16,20 @@ struct Configuration {
 	float shipOutlineColour[AA_RGB];
 	float wallWarnDistance;
 	float shipSpeed, shipTurnSpeed;
-	char  fowardsKey, turnLeftKey, backwardsKey, turnRightKey;
+	bool  useArrowKeys;
+	char  forwardsKey, turnLeftKey, backwardsKey, turnRightKey;
 
 	// Arena
-	bool  useFullWindowForArena;
-	float arenaDimensions[2];
+	int   arenaDim[2];
 	float arenaRGB[AA_RGB];
 
 	// Asteroids
+	int   maxAliveAsteroids;
 	bool  varyAsteroidSize;
-	float asteroidMaxSize;
-	float asteroidMinSize;
+	int   asteroidMaxHP;
+	int   asteroidMinHP;
+	int   asteroidMaxSize;
+	int   asteroidMinSize;
 	float asteroidMinSpeed;
 	float asteroidMaxSpeed;
 	float timeBetweenWaves;
